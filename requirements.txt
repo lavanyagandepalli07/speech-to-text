@@ -1,0 +1,10 @@
+streamlit
+fastapi
+uvicorn
+pymupdf
+pydub
+openai
+tenacity
+celery
+redis
+requests
