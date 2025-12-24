@@ -1,0 +1,42 @@
+version: "3.9"
+
+volumes:
+  audiobook_data:
+
+services:
+  redis:
+    image: redis:7
+
+  backend:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.backend
+    volumes:
+      - audiobook_data:/data
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    depends_on:
+      - redis
+
+  worker:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.backend
+    command: celery -A tasks worker --loglevel=info --concurrency=2
+    volumes:
+      - audiobook_data:/data
+    env_file:
+      - .env
+    depends_on:
+      - redis
+
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.frontend
+    ports:
+      - "8501:8501"
+    depends_on:
+      - backend
